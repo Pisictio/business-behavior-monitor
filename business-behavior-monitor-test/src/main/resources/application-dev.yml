@@ -1,0 +1,18 @@
+server:
+  port: 8092
+
+business:
+  behavior:
+    monitor:
+      config:
+        # 状态；true = 开启、false 关闭
+        enabled: true
+        # redis host
+        host: 116.198.242.254
+        # redis port
+        port: 16379
+
+logging:
+  level:
+    root: info
+  config: classpath:logback-spring.xml
