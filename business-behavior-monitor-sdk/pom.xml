@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.zzzzzzzs</groupId>
+    <artifactId>business-behavior-monitor-sdk</artifactId>
+    <version>1.0</version>
+    <packaging>jar</packaging>
+
+    <!-- 设置项目属性 -->
+    <properties>
+        <!-- Java版本 -->
+        <java.version>1.8</java.version>
+        <!-- Maven Javadoc插件版本 -->
+        <maven.javadoc-plugin.version>3.2.0</maven.javadoc-plugin.version>
+        <!-- Maven源码插件版本 -->
+        <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
+        <!-- Maven GPG插件版本 -->
+        <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
+        <!-- Maven Checksum插件版本 -->
+        <maven-checksum-plugin.version>1.10</maven-checksum-plugin.version>
+    </properties>
+
+    <!-- 指定父POM -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.7.12</version>
+        <!-- 相对路径，表示父POM在同一个Maven仓库中的位置 -->
+        <relativePath/>
+    </parent>
+
+    <!-- 定义项目依赖 -->
+    <dependencies>
+        <!-- Spring Boot启动器依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        <!-- Spring Boot配置处理器依赖，可选 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!-- Spring Boot自动配置依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+        </dependency>
+        <!-- Logback日志依赖 -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.3</version>
+        </dependency>
+        <!-- JUnit测试依赖 -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- OGNL表达式语言依赖，作为提供选项的依赖 -->
+        <dependency>
+            <groupId>ognl</groupId>
+            <artifactId>ognl</artifactId>
+            <version>3.0.8</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+        <!-- FastJSON依赖 -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>2.0.49</version>
+        </dependency>
+        <!-- Redisson Spring Boot启动器依赖 -->
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson-spring-boot-starter</artifactId>
+            <version>3.26.0</version>
+        </dependency>
+    </dependencies>
+
+    <!-- 定义构建配置 -->
+    <build>
+        <!-- 配置资源过滤 -->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <!-- 包含所有资源文件 -->
+                <includes>
+                    <include>**/**</include>
+                </includes>
+            </resource>
+        </resources>
+        <!-- 配置测试资源过滤 -->
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+                <!-- 包含所有测试资源文件 -->
+                <includes>
+                    <include>**/**</include>
+                </includes>
+            </testResource>
+        </testResources>
+    </build>
+
+
+</project>
