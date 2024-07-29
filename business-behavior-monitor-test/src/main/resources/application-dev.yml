@@ -8,9 +8,9 @@ business:
         # 状态；true = 开启、false 关闭
         enabled: true
         # redis host
-        host: 116.198.242.254
+        host: 127.0.0.1
         # redis port
-        port: 16379
+        port: 6379
 
 logging:
   level:

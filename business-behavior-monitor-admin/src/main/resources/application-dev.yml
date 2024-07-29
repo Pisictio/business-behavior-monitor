@@ -4,8 +4,8 @@ server:
 spring:
   datasource:
     username: root
-    password: 123456
-    url: jdbc:mysql://116.198.242.254:13306/business-behavior-monitor?useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&serverTimezone=UTC&useSSL=true
+    password: beaterzzs13762511
+    url: jdbc:mysql://127.0.0.1:3306/business-behavior-monitor?useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&serverTimezone=UTC&useSSL=true
     driver-class-name: com.mysql.cj.jdbc.Driver
   hikari:
     pool-name: Retail_HikariCP
@@ -21,8 +21,8 @@ spring:
 redis:
   sdk:
     config:
-      host: 116.198.242.254 #指定 Redis 服务器的主机地址
-      port: 16379 #指定 Redis 服务器的端口号
+      host: 127.0.0.1 #指定 Redis 服务器的主机地址
+      port: 6379 #指定 Redis 服务器的端口号
       pool-size: 10 #配置连接池的最大连接数
       min-idle-size: 5 #配置连接池的最小空闲连接数
       idle-timeout: 30000 #设置连接空闲超时时间
