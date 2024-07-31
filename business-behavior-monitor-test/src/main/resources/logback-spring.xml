@@ -111,7 +111,7 @@
 
     <appender name="monitor" class="org.zzzzzzzs.sdk.appender.CustomAppender">
         <systemName>big-market</systemName>
-        <groupId>com.zzzzzzzs.monitor</groupId>
+        <groupId>org.zzzzzzzs.monitor.test</groupId>
         <host>127.0.0.1</host>
         <port>6379</port>
     </appender>

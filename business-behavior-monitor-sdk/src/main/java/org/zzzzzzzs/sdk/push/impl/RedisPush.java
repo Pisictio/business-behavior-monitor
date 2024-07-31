@@ -39,7 +39,9 @@ public class RedisPush implements IPush {
     @Override
     public synchronized void open(String host, int port) {
 
-        if (null != redissonClient && !redissonClient.isShutdown()) return;
+        if (null != redissonClient && !redissonClient.isShutdown()) {
+            return;
+        }
 
         // 配置Redisson客户端，设置连接参数和编码器
         Config config = new Config();
@@ -57,26 +59,6 @@ public class RedisPush implements IPush {
 
         // 创建Redisson客户端实例
         this.redissonClient = Redisson.create(config);
-
-        // 订阅名为"business-behavior-monitor-sdk-topic"的主题，并设置消息监听器
-        RTopic topic = redissonClient.getTopic("business-behavior-monitor-sdk-topic");
-        topic.addListener(LogMessage.class, new Listener());
-    }
-
-    /**
-     * 内部类Listener实现了MessageListener接口，用于接收和处理Redis发布的消息。
-     */
-    class Listener implements MessageListener<LogMessage> {
-        /**
-         * 当收到消息时，将消息内容记录到日志。
-         *
-         * @param charSequence 消息的通道名称。
-         * @param logMessage 接收到的LogMessage对象。
-         */
-        @Override
-        public void onMessage(CharSequence charSequence, LogMessage logMessage) {
-            logger.info("接收消息：{}", JSON.toJSONString(logMessage));
-        }
     }
 
     /**

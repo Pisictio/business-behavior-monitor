@@ -36,7 +36,7 @@ mybatis:
   mapper-locations: classpath:/mybatis/mapper/*.xml
   config-location: classpath:/mybatis/config/mybatis-config.xml
 
-logging:
-  level:
-    root: info
-  config: classpath:logback-spring.xml
+#logging:
+#  level:
+#    root: info
+#  config: classpath:logback-spring.xml
