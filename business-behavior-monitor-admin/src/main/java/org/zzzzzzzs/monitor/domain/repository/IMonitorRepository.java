@@ -1,6 +1,7 @@
 package org.zzzzzzzs.monitor.domain.repository;
 
 import org.zzzzzzzs.monitor.domain.model.entity.MonitorDataEntity;
+import org.zzzzzzzs.monitor.domain.model.entity.MonitorDataMapEntity;
 import org.zzzzzzzs.monitor.domain.model.vo.GatherNodeExpressionVO;
 
 import java.util.List;
@@ -36,4 +37,11 @@ public interface IMonitorRepository {
      * @param monitorDataEntity 监控数据
      */
     void saveMonitorData(MonitorDataEntity monitorDataEntity);
+
+    /**
+     * 查询监控数据
+     *
+     * @return 监控数据
+     */
+    List<MonitorDataMapEntity> queryMonitorDataMap();
 }

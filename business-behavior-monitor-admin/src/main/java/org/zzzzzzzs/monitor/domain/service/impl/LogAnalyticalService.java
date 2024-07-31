@@ -6,12 +6,14 @@ import ognl.OgnlContext;
 import ognl.OgnlException;
 import org.springframework.stereotype.Service;
 import org.zzzzzzzs.monitor.domain.model.entity.MonitorDataEntity;
+import org.zzzzzzzs.monitor.domain.model.entity.MonitorDataMapEntity;
 import org.zzzzzzzs.monitor.domain.model.vo.GatherNodeExpressionVO;
 import org.zzzzzzzs.monitor.domain.repository.IMonitorRepository;
 import org.zzzzzzzs.monitor.domain.service.ILogAnalyticalService;
 import org.zzzzzzzs.monitor.types.Constants;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -77,5 +79,10 @@ public class LogAnalyticalService implements ILogAnalyticalService {
                 repository.saveMonitorData(monitorDataEntity);
             }
         }
+    }
+
+    @Override
+    public List<MonitorDataMapEntity> queryMonitorDataMap() {
+        return repository.queryMonitorDataMap();
     }
 }

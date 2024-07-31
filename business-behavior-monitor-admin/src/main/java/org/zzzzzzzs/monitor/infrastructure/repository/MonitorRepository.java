@@ -2,6 +2,7 @@ package org.zzzzzzzs.monitor.infrastructure.repository;
 
 import org.springframework.stereotype.Repository;
 import org.zzzzzzzs.monitor.domain.model.entity.MonitorDataEntity;
+import org.zzzzzzzs.monitor.domain.model.entity.MonitorDataMapEntity;
 import org.zzzzzzzs.monitor.domain.model.vo.GatherNodeExpressionVO;
 import org.zzzzzzzs.monitor.domain.repository.IMonitorRepository;
 import org.zzzzzzzs.monitor.infrastructure.dao.IMonitorDataDao;
@@ -9,11 +10,13 @@ import org.zzzzzzzs.monitor.infrastructure.dao.IMonitorDataMapDao;
 import org.zzzzzzzs.monitor.infrastructure.dao.IMonitorDataMapNodeDao;
 import org.zzzzzzzs.monitor.infrastructure.dao.IMonitorDataMapNodeFieldDao;
 import org.zzzzzzzs.monitor.infrastructure.po.MonitorData;
+import org.zzzzzzzs.monitor.infrastructure.po.MonitorDataMap;
 import org.zzzzzzzs.monitor.infrastructure.po.MonitorDataMapNode;
 import org.zzzzzzzs.monitor.infrastructure.po.MonitorDataMapNodeField;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -43,7 +46,7 @@ public class MonitorRepository implements IMonitorRepository {
         monitorDataMapNodeReq.setGatherMethodName(methodName);
         // 查询监控节点
         List<MonitorDataMapNode> monitorDataMapNodeList = monitorDataMapNodeDao.queryMonitorDataMapNodeList(monitorDataMapNodeReq);
-        if (monitorDataMapNodeList.isEmpty()){
+        if (monitorDataMapNodeList.isEmpty()) {
             return null;
         }
 
@@ -96,5 +99,19 @@ public class MonitorRepository implements IMonitorRepository {
                 .attributeValue(monitorDataEntity.getAttributeValue())
                 .build();
         monitorDataDao.saveMonitorData(monitorData);
+    }
+
+    @Override
+    public List<MonitorDataMapEntity> queryMonitorDataMap() {
+        List<MonitorDataMapEntity> monitorDataMapEntityList = new ArrayList<>();
+        List<MonitorDataMap> monitorDataMapList = monitorDataMapDao.queryMonitorDataMapList();
+        for (MonitorDataMap monitorDataMap : monitorDataMapList) {
+            MonitorDataMapEntity monitorDataMapEntity = MonitorDataMapEntity.builder()
+                    .monitorId(monitorDataMap.getMonitorId())
+                    .monitorName(monitorDataMap.getMonitorName())
+                    .build();
+            monitorDataMapEntityList.add(monitorDataMapEntity);
+        }
+        return monitorDataMapEntityList;
     }
 }
