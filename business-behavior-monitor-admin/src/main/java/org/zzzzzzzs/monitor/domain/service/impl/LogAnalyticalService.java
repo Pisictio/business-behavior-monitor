@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.zzzzzzzs.monitor.domain.model.entity.MonitorDataEntity;
 import org.zzzzzzzs.monitor.domain.model.entity.MonitorDataMapEntity;
 import org.zzzzzzzs.monitor.domain.model.vo.GatherNodeExpressionVO;
+import org.zzzzzzzs.monitor.domain.model.vo.MonitorTreeConfigVO;
 import org.zzzzzzzs.monitor.domain.repository.IMonitorRepository;
 import org.zzzzzzzs.monitor.domain.service.ILogAnalyticalService;
 import org.zzzzzzzs.monitor.types.Constants;
@@ -84,5 +85,10 @@ public class LogAnalyticalService implements ILogAnalyticalService {
     @Override
     public List<MonitorDataMapEntity> queryMonitorDataMap() {
         return repository.queryMonitorDataMap();
+    }
+
+    @Override
+    public MonitorTreeConfigVO queryMonitorFlowMap(String monitorId) {
+        return repository.queryMonitorFlowMap(monitorId);
     }
 }

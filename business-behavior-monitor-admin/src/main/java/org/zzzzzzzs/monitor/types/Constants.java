@@ -16,6 +16,7 @@ public class Constants {
     public final static String UNDERLINE = "_";
 
     public static class RedisKey {
-
+        // 监控节点数据统计
+        public final static String MONITOR_NODE_DATA_COUNT_KEY = "monitor_node_data_count_key_";
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.zzzzzzzs.monitor.trigger.http.MonitorController;
 import org.zzzzzzzs.monitor.trigger.http.dto.MonitorDataMapDTO;
+import org.zzzzzzzs.monitor.trigger.http.dto.MonitorFlowDataDTO;
 import org.zzzzzzzs.monitor.types.Response;
 
 import javax.annotation.Resource;
@@ -30,5 +31,11 @@ public class MonitorControllerTest {
     public void testQueryMonitorDataMap() {
         Response<List<MonitorDataMapDTO>> response = monitorController.queryMonitorDataMap();
         log.info("测试查询监控数据: {}", JSON.toJSONString(response));
+    }
+
+    @Test
+    public void testQueryMonitorFlowMap() {
+        Response<MonitorFlowDataDTO> response = monitorController.queryMonitorFlowMap("129009");
+        log.info("测试查询监控系统流程数据: {}", JSON.toJSONString(response));
     }
 }

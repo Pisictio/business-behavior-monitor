@@ -4,20 +4,18 @@ import org.springframework.stereotype.Repository;
 import org.zzzzzzzs.monitor.domain.model.entity.MonitorDataEntity;
 import org.zzzzzzzs.monitor.domain.model.entity.MonitorDataMapEntity;
 import org.zzzzzzzs.monitor.domain.model.vo.GatherNodeExpressionVO;
+import org.zzzzzzzs.monitor.domain.model.vo.MonitorTreeConfigVO;
 import org.zzzzzzzs.monitor.domain.repository.IMonitorRepository;
-import org.zzzzzzzs.monitor.infrastructure.dao.IMonitorDataDao;
-import org.zzzzzzzs.monitor.infrastructure.dao.IMonitorDataMapDao;
-import org.zzzzzzzs.monitor.infrastructure.dao.IMonitorDataMapNodeDao;
-import org.zzzzzzzs.monitor.infrastructure.dao.IMonitorDataMapNodeFieldDao;
-import org.zzzzzzzs.monitor.infrastructure.po.MonitorData;
-import org.zzzzzzzs.monitor.infrastructure.po.MonitorDataMap;
-import org.zzzzzzzs.monitor.infrastructure.po.MonitorDataMapNode;
-import org.zzzzzzzs.monitor.infrastructure.po.MonitorDataMapNodeField;
+import org.zzzzzzzs.monitor.infrastructure.dao.*;
+import org.zzzzzzzs.monitor.infrastructure.po.*;
+import org.zzzzzzzs.monitor.infrastructure.redis.IRedisService;
+import org.zzzzzzzs.monitor.types.Constants;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author zzs
@@ -35,6 +33,10 @@ public class MonitorRepository implements IMonitorRepository {
     private IMonitorDataMapNodeDao monitorDataMapNodeDao;
     @Resource
     private IMonitorDataMapNodeFieldDao monitorDataMapNodeFieldDao;
+    @Resource
+    private IMonitorDataMapNodeLinkDao monitorDataMapNodeLinkDao;
+    @Resource
+    private IRedisService redisService;
 
     @Override
     public List<GatherNodeExpressionVO> queryGatherNodeExpressionVO(String systemName, String className, String methodName) {
@@ -98,6 +100,12 @@ public class MonitorRepository implements IMonitorRepository {
                 .attributeField(monitorDataEntity.getAttributeField())
                 .attributeValue(monitorDataEntity.getAttributeValue())
                 .build();
+        String cacheKey = Constants.RedisKey.MONITOR_NODE_DATA_COUNT_KEY + monitorDataEntity.getMonitorId() + Constants.UNDERLINE + monitorDataEntity.getMonitorNodeId();
+        if (!redisService.isExists(cacheKey)) {
+            redisService.setAtomicLong(cacheKey, 1);
+        } else {
+            redisService.incr(cacheKey);
+        }
         monitorDataDao.saveMonitorData(monitorData);
     }
 
@@ -113,5 +121,65 @@ public class MonitorRepository implements IMonitorRepository {
             monitorDataMapEntityList.add(monitorDataMapEntity);
         }
         return monitorDataMapEntityList;
+    }
+
+    @Override
+    public MonitorTreeConfigVO queryMonitorFlowMap(String monitorId) {
+        // 查询监控节点
+        List<MonitorDataMapNode> monitorDataMapNodeList = monitorDataMapNodeDao.queryMonitorDataMapNodeConfig(monitorId);
+        // 查询监控节点连线
+        List<MonitorDataMapNodeLink> monitorDataMapNodeLinkList = monitorDataMapNodeLinkDao.queryMonitorDataMapNodeLinkConfig(monitorId);
+        // 根据from分组
+        Map<String, List<String>> collect = monitorDataMapNodeLinkList.stream()
+                .collect(Collectors.groupingBy(MonitorDataMapNodeLink::getFromMonitorNodeId,
+                        Collectors.mapping(MonitorDataMapNodeLink::getToMonitorNodeId,
+                                Collectors.toList())));
+
+        // 构建节点
+        List<MonitorTreeConfigVO.Node> nodeList = new ArrayList<>();
+        for (MonitorDataMapNode monitorDataMapNode : monitorDataMapNodeList) {
+            String cache = Constants.RedisKey.MONITOR_NODE_DATA_COUNT_KEY + monitorId + Constants.UNDERLINE + monitorDataMapNode.getMonitorNodeId();
+            // 获取节点数据
+            Long count = redisService.getAtomicLong(cache);
+            MonitorTreeConfigVO.Node node = MonitorTreeConfigVO.Node.builder()
+                    .monitorNodeId(monitorDataMapNode.getMonitorNodeId())
+                    .monitorNodeName(monitorDataMapNode.getMonitorNodeName())
+                    .monitorNodeValue(null == count ? "0" : String.valueOf(count))
+                    .loc(monitorDataMapNode.getLoc())
+                    .color(monitorDataMapNode.getColor())
+                    .build();
+            nodeList.add(node);
+        }
+
+        // 构建连线
+        List<MonitorTreeConfigVO.Link> linkList = new ArrayList<>();
+        for (MonitorDataMapNodeLink monitorDataMapNodeLink : monitorDataMapNodeLinkList) {
+            String fromCacheKey = Constants.RedisKey.MONITOR_NODE_DATA_COUNT_KEY + monitorId + Constants.UNDERLINE + monitorDataMapNodeLink.getFromMonitorNodeId();
+            // from的流量值
+            Long fromCount = redisService.getAtomicLong(fromCacheKey);
+            Long toCount = 0L;
+            List<String> toNodeIdList = collect.get(monitorDataMapNodeLink.getFromMonitorNodeId());
+            for (String toNodeId : toNodeIdList) {
+                String toCacheKey = Constants.RedisKey.MONITOR_NODE_DATA_COUNT_KEY + monitorId + Constants.UNDERLINE + toNodeId;
+                toCount += redisService.getAtomicLong(toCacheKey);
+            }
+
+            // 计算未到达的流量值（from的流量-to的流量）
+            long linkValue = (null == fromCount ? 0L : fromCount) - toCount;
+
+            MonitorTreeConfigVO.Link link = MonitorTreeConfigVO.Link.builder()
+                    .fromMonitorNodeId(monitorDataMapNodeLink.getFromMonitorNodeId())
+                    .toMonitorNodeId(monitorDataMapNodeLink.getToMonitorNodeId())
+                    .nodeLinkKey(String.valueOf(monitorDataMapNodeLink.getId()))
+                    .linkValue(String.valueOf(linkValue <= 0 ? 0 : linkValue))
+                    .build();
+            linkList.add(link);
+        }
+
+        return MonitorTreeConfigVO.builder()
+                .monitorId(monitorId)
+                .nodeList(nodeList)
+                .linkList(linkList)
+                .build();
     }
 }

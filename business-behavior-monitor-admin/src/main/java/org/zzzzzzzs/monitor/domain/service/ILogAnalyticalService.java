@@ -2,6 +2,7 @@ package org.zzzzzzzs.monitor.domain.service;
 
 import ognl.OgnlException;
 import org.zzzzzzzs.monitor.domain.model.entity.MonitorDataMapEntity;
+import org.zzzzzzzs.monitor.domain.model.vo.MonitorTreeConfigVO;
 
 import java.util.List;
 
@@ -29,4 +30,12 @@ public interface ILogAnalyticalService {
      * @return 监控数据
      */
     List<MonitorDataMapEntity> queryMonitorDataMap();
+
+    /**
+     * 查询监控流程图
+     *
+     * @param monitorId 监控id
+     * @return 监控流程图
+     */
+    MonitorTreeConfigVO queryMonitorFlowMap(String monitorId);
 }
